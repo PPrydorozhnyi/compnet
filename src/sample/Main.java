@@ -11,11 +11,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import networkEntities.BoosterStation;
 
 import static javafx.geometry.HPos.RIGHT;
 
@@ -40,6 +42,8 @@ public class Main extends Application {
     private int nNPP;
     private TextField[] alfa;
     private double[] attenuation;
+    Label l1;
+    private BoosterStation[] boosters;
 
     @Override
     public void start(Stage primaryStage) {
@@ -61,16 +65,21 @@ public class Main extends Application {
         grid.add(scenetitle, 0, 0, 2, 1);
 
         attenuation = new double[MAX_SEGMENTS];
+
+        drawScene(grid);
+    }
+
+    private void drawScene(GridPane grid) {
         setSceneObjects(grid);
         makeLabels(grid);
         makeTextFields(grid);
         makeButtons(grid);
 
-        primaryStage.show();
+        primaryS.show();
     }
 
     private void makeLabels(GridPane grid) {
-        Label l1;
+
 
         Label length = new Label("L:");
         grid.add(length, 0, 1);
@@ -103,6 +112,7 @@ public class Main extends Application {
 
         for (int i = 0; i < MAX_SEGMENTS; ++i) {
             alfa[i] = new TextField();
+            alfa[i].setText("1");
             grid.add(alfa[i], 3, i + 1);
         }
     }
@@ -125,7 +135,34 @@ public class Main extends Application {
             calculateLab1();
             outputLab1(actiontarget);
 
+
+            createBoosters(root);
+
+            createConnections(root);
+
+
         });
+    }
+
+    private void createBoosters(Group root) {
+        boosters = new BoosterStation[nPp + 2];
+        int frequency = nNPP / (nOPP + 1);
+        System.out.println(frequency);
+
+        boosters[0] = new BoosterStation(root, "KC", 0);
+        boosters[boosters.length - 1] = new BoosterStation(root, "KC", boosters.length - 1);
+
+        for (int i = 1, count = 0; i < boosters.length - 1; ++i) {
+            if (count == frequency) {
+                boosters[i] = new BoosterStation(root, "OПП", i);
+                count = 0;
+            } else {
+
+                boosters[i] = new BoosterStation(root, "НПП", i);
+                count++;
+            }
+
+        }
     }
 
     private void setSceneObjects(GridPane grid) {
@@ -172,6 +209,19 @@ public class Main extends Application {
         text.setText("Довжина підсилюваної ділянки: " + lyy + "\nЧисло обслуговуємих підсилюючих пунктів: " + nOPP +
         "\nЧисло необслуговуємих підсилюючих пунктів: " + nNPP + "\n" + stringBuilder.toString());
 
+
+    }
+
+    private void createConnections(Group root) {
+        Line line;
+        int y = boosters[0].getY() + boosters[0].getWidth() / 2;
+
+        for (int i = 0; i < boosters.length - 1; ++i) {
+            line = new Line(boosters[i].getX() + boosters[i].getWidth(),y ,
+                    boosters[i + 1].getX(), y);
+
+            root.getChildren().add(line);
+        }
     }
 
 
