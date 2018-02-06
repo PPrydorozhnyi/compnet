@@ -27,22 +27,18 @@ public class Main extends Application {
 
     private Stage primaryS;
 
-    private int cWidth = 800;
-    private Rectangle background;
     private TextField length;
     private TextField nOpp;
     private TextField nPd;
 
-    Group root;
+    private Group root;
 
     private double lyy;
-    private int nPdValue;
     private int nPp;
     private int nOPP;
     private int nNPP;
     private TextField[] alfa;
     private double[] attenuation;
-    Label l1;
     private BoosterStation[] boosters;
 
     @Override
@@ -91,7 +87,7 @@ public class Main extends Application {
         grid.add(sl, 0, 3);
 
         for (int i = 1; i <= MAX_SEGMENTS; ++i) {
-            l1 = new Label("α" + i + ":");
+            Label l1 = new Label("α" + i + ":");
             grid.add(l1, 2, i);
         }
 
@@ -147,15 +143,16 @@ public class Main extends Application {
     private void createBoosters(Group root) {
         boosters = new BoosterStation[nPp + 2];
         int frequency = nNPP / (nOPP + 1);
-        System.out.println(frequency);
+        //System.out.println(frequency);
 
         boosters[0] = new BoosterStation(root, "KC", 0);
         boosters[boosters.length - 1] = new BoosterStation(root, "KC", boosters.length - 1);
 
         for (int i = 1, count = 0; i < boosters.length - 1; ++i) {
-            if (count == frequency) {
+            if (count == frequency && nOPP !=0) {
                 boosters[i] = new BoosterStation(root, "OПП", i);
                 count = 0;
+                --nOPP;
             } else {
 
                 boosters[i] = new BoosterStation(root, "НПП", i);
@@ -168,7 +165,8 @@ public class Main extends Application {
     private void setSceneObjects(GridPane grid) {
         root = new Group();
 
-        background = new Rectangle(cWidth, cWidth);
+        int cWidth = 800;
+        Rectangle background = new Rectangle(cWidth, cWidth);
 
         background.setFill(Color.WHITE);
         background.setStroke(Color.BLACK);
@@ -181,7 +179,7 @@ public class Main extends Application {
 
     private void calculateLab1() {
 
-        nPdValue = Integer.valueOf(nPd.getText());
+        int nPdValue = Integer.valueOf(nPd.getText());
 
         lyy = Double.valueOf(length.getText()) / nPdValue;
         nPp = nPdValue - 1;
@@ -201,7 +199,10 @@ public class Main extends Application {
 
         for (int i = 0; i < MAX_SEGMENTS; ++i) {
 
-            stringBuilder.append("A" + (i + 1) + ": " + attenuation[i]);
+            stringBuilder.append("A");
+            stringBuilder.append(i + 1);
+            stringBuilder.append(": ");
+            stringBuilder.append(attenuation[i]);
             stringBuilder.append("\n");
 
         }

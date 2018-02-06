@@ -2,15 +2,7 @@ package networkEntities;
 
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-
-import java.awt.*;
 
 /**
  * Created by drake on 05/02/18.
