@@ -421,7 +421,7 @@ public class Main extends Application {
     private void connectGO(ArrayList<BoosterStation> stations) {
         Line line;
         Label go;
-        int width = 60 ;
+        int width = 60;
 
         go = new Label("ГО");
         go.setTranslateX(380);
