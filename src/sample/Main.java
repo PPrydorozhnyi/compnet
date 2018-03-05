@@ -19,17 +19,20 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import networkEntities.BoosterStation;
 
+import java.util.ArrayList;
+
 import static javafx.geometry.HPos.RIGHT;
 
 public class Main extends Application {
 
-    private static final int MAX_SEGMENTS = 6;
+    private static final int MAX_SEGMENTS = 4;
 
     private Stage primaryS;
 
     private TextField length;
     private TextField nOpp;
     private TextField nPd;
+    private TextField nChan;
 
     private Group root;
 
@@ -37,9 +40,16 @@ public class Main extends Application {
     private int nPp;
     private int nOPP;
     private int nNPP;
+    private int nChannels;
     private TextField[] alfa;
     private double[] attenuation;
     private BoosterStation[] boosters;
+
+    private int nAIP;
+    private int nAPP;
+    private int nAVP;
+    private int nATP;
+    private int nACP;
 
     @Override
     public void start(Stage primaryStage) {
@@ -92,6 +102,8 @@ public class Main extends Application {
         }
 
 
+        Label nChannels = new Label("Number of channels");
+        grid.add(nChannels, 0, 7);
     }
 
     private void makeTextFields(GridPane grid) {
@@ -111,6 +123,9 @@ public class Main extends Application {
             alfa[i].setText("1");
             grid.add(alfa[i], 3, i + 1);
         }
+
+        nChan = new TextField();
+        grid.add(nChan, 1, 7);
     }
 
     private void makeButtons(GridPane grid) {
@@ -121,7 +136,7 @@ public class Main extends Application {
         grid.add(hbBtn, 1, 6);
 
         final Text actiontarget = new Text();
-        grid.add(actiontarget, 0, 7);
+        grid.add(actiontarget, 2, 7);
         GridPane.setColumnSpan(actiontarget, 2);
         GridPane.setHalignment(actiontarget, RIGHT);
         actiontarget.setId("actiontarget");
@@ -136,6 +151,41 @@ public class Main extends Application {
 
             createConnections(root);
 
+
+        });
+
+        Button btnChan = new Button("Result");
+        HBox hbChan = new HBox(10);
+        hbChan.setAlignment(Pos.BOTTOM_RIGHT);
+        hbChan.getChildren().add(btnChan);
+        grid.add(hbChan, 1, 8);
+
+//        final Text actiontargetC = new Text();
+//        grid.add(actiontargetC, 2, 8);
+//        GridPane.setColumnSpan(actiontarget, 2);
+//        GridPane.setHalignment(actiontarget, RIGHT);
+//        actiontarget.setId("actiontarget");
+
+        btnChan.setOnAction(e -> {
+
+            ArrayList<BoosterStation> upperStations = new ArrayList<>();
+            ArrayList<BoosterStation> lowerStations = new ArrayList<>();
+
+            System.out.println("Done");
+
+            nChannels = Integer.valueOf(nChan.getText());
+
+            root.getChildren().clear();
+            grid.getChildren().clear();
+            drawScene(grid);
+
+            calculateNagp();
+
+            createAGP(root, upperStations, lowerStations);
+            createLines(upperStations);
+            connectGO(lowerStations);
+
+            //System.out.println(nAIP + " " + nAPP + " " + nAVP + " " + nATP + " " + nACP);
 
         });
     }
@@ -220,6 +270,174 @@ public class Main extends Application {
         for (int i = 0; i < boosters.length - 1; ++i) {
             line = new Line(boosters[i].getX() + boosters[i].getWidth(),y ,
                     boosters[i + 1].getX(), y);
+
+            root.getChildren().add(line);
+        }
+    }
+
+    private void calculateNagp() {
+
+        if (nChannels < 12) {
+            nAIP = nChannels / 3;
+        } else {
+            nAIP = 0;
+            nAPP = nChannels / 12;
+            System.out.println(nAPP);
+
+            if (nAPP / 5 > 0) {
+                nAVP = nAPP / 5;
+
+                if (nAVP / 5 > 0) {
+                    nATP = nAVP / 5;
+
+                    if (nATP / 5 > 0) {
+                        nACP = nATP / 5;
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    private void createAGP(Group root, ArrayList<BoosterStation> upperStations,ArrayList<BoosterStation> lowerStations ) {
+
+        BoosterStation au;
+        BoosterStation kalt;
+        int lastN;
+
+        if (nAIP != 0) {
+            if (nAIP > 1)
+                createCoupleStations(upperStations, lowerStations, "АІП", 0, nAIP);
+            else
+               createSigleStation(upperStations, lowerStations, "АІП", 0);
+
+            lastN = 0;
+
+        } else {
+
+            lastN = 0;
+
+            if (nAPP > 1)
+                createCoupleStations(upperStations, lowerStations, "АПП", lastN, nAPP);
+            else
+                createSigleStation(upperStations, lowerStations, "АПП", lastN);
+
+
+            if (nAVP != 0) {
+
+//                lastN = 1;
+
+                if (nAVP > 1)
+                    createCoupleStations(upperStations, lowerStations, "АВП",++lastN, nAVP );
+                else
+                    createSigleStation(upperStations, lowerStations, "АВП", ++lastN);
+
+                if (nATP != 0) {
+//                    lastN = 2;
+
+                    if (nATP > 1)
+                        createCoupleStations(upperStations, lowerStations, "АТП",++lastN, nATP);
+                    else
+                        createSigleStation(upperStations, lowerStations, "АТП", ++lastN);
+
+                    if (nACP != 0) {
+//                        lastN = 3;
+
+                        if (nACP > 1)
+                            createCoupleStations(upperStations, lowerStations, "АЧП", ++lastN, nACP);
+                        else
+                            createSigleStation(upperStations, lowerStations, "АЧП", ++lastN);
+                    }
+                }
+            }
+
+        }
+
+        au = new BoosterStation(root, "АУ", ++lastN);
+        lowerStations.add(au);
+        upperStations.add(au);
+        kalt = new BoosterStation(root, "КАЛТ", ++lastN);
+        upperStations.add(kalt);
+
+
+    }
+
+    private void createCoupleStations(ArrayList<BoosterStation> upperStations, ArrayList<BoosterStation> lowerStations,
+                                      String text, int number, int endNumber) {
+        BoosterStation lastStation;
+        BoosterStation currentStation;
+        Line connector;
+
+        Label first;
+        Label second;
+
+        lastStation = new BoosterStation(root, text, number);
+        currentStation = new BoosterStation(root, text, number);
+        currentStation.setLevel(1);
+
+        upperStations.add(lastStation);
+        lowerStations.add(currentStation);
+
+        connector = new Line(lastStation.getX() + lastStation.getWidth() / 2,
+                lastStation.getY() + lastStation.getWidth(),
+                currentStation.getX() + currentStation.getWidth() /2,
+                currentStation.getY());
+        root.getChildren().add(connector);
+        // TODO: add label with number of station
+
+        first = new Label("1");
+        first.setTranslateX(lastStation.getX() - 30);
+        first.setTranslateY(lastStation.getY());
+
+        second = new Label(String.valueOf(endNumber));
+        second.setTranslateX(currentStation.getX() - 30);
+        second.setTranslateY(currentStation.getY());
+
+        root.getChildren().addAll(first, second);
+    }
+
+    private void createSigleStation(ArrayList<BoosterStation> upperStations,ArrayList<BoosterStation> lowerStations,
+                                    String text, int number) {
+        BoosterStation lastStation;
+
+        lastStation = new BoosterStation(root, text, number);
+        upperStations.add(lastStation);
+        lowerStations.add(lastStation);
+    }
+
+    private void createLines(ArrayList<BoosterStation> stations) {
+        Line line;
+        int y = stations.get(0).getY() +stations.get(0).getWidth() / 2;
+
+        for (int i = 0; i < stations.size() - 1; ++i) {
+            line = new Line(stations.get(i).getX() + stations.get(i).getWidth(),y ,
+                    stations.get(i + 1).getX(), y);
+
+            root.getChildren().add(line);
+        }
+    }
+
+    private void connectGO(ArrayList<BoosterStation> stations) {
+        Line line;
+        Label go;
+        int width = 60;
+
+        go = new Label("ГО");
+        go.setTranslateX(380);
+        go.setTranslateY(600);
+        go.setStyle("-fx-background-color: coral; -fx-padding: 10px;");
+        go.setMinSize(width, width);
+        go.setMaxSize(width, width);
+        go.setAlignment(Pos.CENTER);
+
+        root.getChildren().add(go);
+
+        for (BoosterStation station: stations) {
+
+            line = new Line(station.getX() + station.getWidth() / 2,
+                    station.getY() + station.getWidth(),
+                    go.getTranslateX() + width / 2, go.getTranslateY());
 
             root.getChildren().add(line);
         }

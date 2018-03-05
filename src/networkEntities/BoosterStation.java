@@ -35,7 +35,7 @@ public class BoosterStation {
         label.setMinSize(WIDTH, WIDTH);
         label.setMaxSize(WIDTH, WIDTH);
         label.setAlignment(Pos.CENTER);
-        label.setTranslateX(10 + n * WIDTH + 20 * n);
+        label.setTranslateX(30 + n * WIDTH + 40 * n);
         label.setTranslateY(200);
 
     }
@@ -52,5 +52,15 @@ public class BoosterStation {
         return (int)label.getTranslateY();
     }
 
+    public void setX(int x) { label.setTranslateX(x); }
 
+    public void setY(int y) { label.setTranslateY(y); }
+
+    public void setLevel(int n) {
+        label.setTranslateY(label.getTranslateY() + 2 * WIDTH * n);
+    }
+
+    public int getN() {
+        return n;
+    }
 }
