@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -188,6 +190,31 @@ public class Main extends Application {
             //System.out.println(nAIP + " " + nAPP + " " + nAVP + " " + nATP + " " + nACP);
 
         });
+
+        Button btnChan1 = new Button("Result1");
+        HBox hbChan1 = new HBox(10);
+        hbChan1.setAlignment(Pos.BOTTOM_RIGHT);
+        hbChan1.getChildren().add(btnChan1);
+        grid.add(hbChan1, 1, 9);
+
+        btnChan1.setOnAction(e -> {
+
+            System.out.println("Done");
+
+            nChannels = Integer.valueOf(nChan.getText());
+
+            root.getChildren().clear();
+            grid.getChildren().clear();
+            drawScene(grid);
+            Label label1 = new Label();
+            root.getChildren().add(label1);
+
+            calculateNagp();
+
+            createLab3(label1);
+
+
+        });
     }
 
     private void createBoosters(Group root) {
@@ -219,7 +246,7 @@ public class Main extends Application {
         Rectangle background = new Rectangle(cWidth, cWidth);
 
         background.setFill(Color.WHITE);
-        background.setStroke(Color.BLACK);
+//        background.setStroke(Color.BLACK);
         root.getChildren().add(background);
 
         HBox hBox = new HBox(10, root, grid);
@@ -277,7 +304,7 @@ public class Main extends Application {
 
     private void calculateNagp() {
 
-        if (nChannels < 12) {
+        if (nChannels <= 12) {
             nAIP = nChannels / 3;
         } else {
             nAIP = 0;
@@ -300,6 +327,134 @@ public class Main extends Application {
 
     }
 
+    private void createLab3(Label label) {
+
+        Image image;
+        Label[] labels = new Label[6];
+
+        if (nAIP != 0) {
+            image = new Image("case1.jpg");
+            label.setGraphic(new ImageView(image));
+
+            labels[0] = new Label("1");
+            labels[0].setTranslateX(125);
+            labels[0].setTranslateY(260);
+            labels[1] = new Label(String.valueOf(nAIP));
+            labels[1].setTranslateX(125);
+            labels[1].setTranslateY(345);
+
+            root.getChildren().addAll(labels[0], labels[1]);
+        } else {
+
+            if (nAPP > 1 && nAPP < 5 && nAVP == 0) {
+
+                image = new Image("case2.jpg");
+                label.setGraphic(new ImageView(image));
+
+                labels[0] = new Label("1");
+                labels[0].setTranslateX(95);
+                labels[0].setTranslateY(213);
+                labels[1] = new Label(String.valueOf(nAPP));
+                labels[1].setTranslateX(95);
+                labels[1].setTranslateY(295);
+
+                root.getChildren().addAll(labels[0], labels[1]);
+            } else if (nAVP == 1 && nAPP == 5) {
+                image = new Image("case3.0.jpg");
+                label.setGraphic(new ImageView(image));
+
+                labels[0] = new Label("1");
+                labels[0].setTranslateX(95);
+                labels[0].setTranslateY(213);
+                labels[1] = new Label(String.valueOf(nAPP));
+                labels[1].setTranslateX(95);
+                labels[1].setTranslateY(295);
+
+                labels[2] = new Label("1");
+                labels[2].setTranslateX(350);
+                labels[2].setTranslateY(393);
+
+                root.getChildren().addAll(labels[0],labels[1], labels[2]);
+
+            } else if (nAPP >= 5 && nAPP %5 == 0 && nAVP < 5 && nATP == 0) {
+
+                image = new Image("case3.jpg");
+                label.setGraphic(new ImageView(image));
+
+                labels[0] = new Label("1");
+                labels[0].setTranslateX(95);
+                labels[0].setTranslateY(213);
+                labels[1] = new Label(String.valueOf(nAPP));
+                labels[1].setTranslateX(95);
+                labels[1].setTranslateY(295);
+
+                labels[2] = new Label("1");
+                labels[2].setTranslateX(350);
+                labels[2].setTranslateY(393);
+                labels[3] = new Label(String.valueOf(nAVP));
+                labels[3].setTranslateX(350);
+                labels[3].setTranslateY(480);
+
+                root.getChildren().addAll(labels[0],labels[1], labels[2], labels[3]);
+
+            } else if (nAPP >= 5 && nAPP %5 != 0 && nAVP == 1) {
+
+                image = new Image("case4.jpg");
+                label.setGraphic(new ImageView(image));
+
+                labels[0] = new Label("1");
+                labels[0].setTranslateX(95);
+                labels[0].setTranslateY(213);
+                labels[1] = new Label(String.valueOf(nAPP - nAPP % 5));
+                labels[1].setTranslateX(95);
+                labels[1].setTranslateY(295);
+
+                labels[4] = new Label(String.valueOf(nAPP));
+                labels[4].setTranslateX(95);
+                labels[4].setTranslateY(393);
+
+                labels[2] = new Label("1");
+                labels[2].setTranslateX(350);
+                labels[2].setTranslateY(393);
+
+
+                root.getChildren().addAll(labels[0],labels[1], labels[2], labels[4]);
+
+            } else if(nATP >= 1 && nATP < 5) {
+
+                image = new Image("Case5.png");
+                label.setGraphic(new ImageView(image));
+
+                labels[0] = new Label("1");
+                labels[0].setTranslateX(95);
+                labels[0].setTranslateY(213);
+                labels[1] = new Label(String.valueOf(nAPP));
+                labels[1].setTranslateX(95);
+                labels[1].setTranslateY(295);
+
+                labels[2] = new Label("1");
+                labels[2].setTranslateX(350);
+                labels[2].setTranslateY(393);
+                labels[3] = new Label(String.valueOf(nAVP));
+                labels[3].setTranslateX(350);
+                labels[3].setTranslateY(480);
+
+                labels[4] = new Label("1");
+                labels[4].setTranslateX(615);
+                labels[4].setTranslateY(568);
+                labels[5] = new Label(String.valueOf(nATP));
+                labels[5].setTranslateX(615);
+                labels[5].setTranslateY(655);
+
+                root.getChildren().addAll(labels);
+
+            }
+
+        }
+
+
+    }
+
     private void createAGP(Group root, ArrayList<BoosterStation> upperStations,ArrayList<BoosterStation> lowerStations ) {
 
         BoosterStation au;
@@ -319,9 +474,9 @@ public class Main extends Application {
             lastN = 0;
 
             if (nAPP > 1)
-                createCoupleStations(upperStations, lowerStations, "АПП", lastN, nAPP);
+                createCoupleStations(upperStations, lowerStations, "АІП", lastN, nAPP);
             else
-                createSigleStation(upperStations, lowerStations, "АПП", lastN);
+                createSigleStation(upperStations, lowerStations, "АІП", lastN);
 
 
             if (nAVP != 0) {
@@ -329,25 +484,25 @@ public class Main extends Application {
 //                lastN = 1;
 
                 if (nAVP > 1)
-                    createCoupleStations(upperStations, lowerStations, "АВП",++lastN, nAVP );
+                    createCoupleStations(upperStations, lowerStations, "АПП",++lastN, nAVP );
                 else
-                    createSigleStation(upperStations, lowerStations, "АВП", ++lastN);
+                    createSigleStation(upperStations, lowerStations, "АПП", ++lastN);
 
                 if (nATP != 0) {
 //                    lastN = 2;
 
                     if (nATP > 1)
-                        createCoupleStations(upperStations, lowerStations, "АТП",++lastN, nATP);
+                        createCoupleStations(upperStations, lowerStations, "АВП",++lastN, nATP);
                     else
-                        createSigleStation(upperStations, lowerStations, "АТП", ++lastN);
+                        createSigleStation(upperStations, lowerStations, "АВП", ++lastN);
 
                     if (nACP != 0) {
 //                        lastN = 3;
 
                         if (nACP > 1)
-                            createCoupleStations(upperStations, lowerStations, "АЧП", ++lastN, nACP);
+                            createCoupleStations(upperStations, lowerStations, "АТП", ++lastN, nACP);
                         else
-                            createSigleStation(upperStations, lowerStations, "АЧП", ++lastN);
+                            createSigleStation(upperStations, lowerStations, "АТП", ++lastN);
                     }
                 }
             }
